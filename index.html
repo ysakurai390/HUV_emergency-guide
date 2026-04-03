@@ -4,333 +4,399 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>緊急時のご案内 | NanoAct</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f6f6f6;
-      --bg-accent: #efefef;
-      --panel: rgba(255, 255, 255, 0.94);
-      --line: #dddddd;
-      --line-strong: #cfcfcf;
-      --text: #1f1f1f;
-      --muted: #6a6a6a;
-      --soft: #f1f1f1;
-      --shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
-      --shadow-hover: 0 22px 48px rgba(0, 0, 0, 0.09);
+      --green:#1a9e6f; --green-lt:#e8f7f2; --amber:#d97706; --amber-lt:#fef3e2;
+      --red:#dc2626; --red-lt:#fef2f2; --red-md:#fee2e2; --blue:#2563eb; --blue-lt:#eff6ff;
+      --bg:#f8f8f6; --surface:#ffffff; --border:rgba(0,0,0,0.08); --border-md:rgba(0,0,0,0.12);
+      --text:#111111; --text-2:#444444; --text-3:#888888;
+      --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:0 4px 16px rgba(0,0,0,0.06),0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg:0 12px 40px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
+      --radius-sm:10px; --radius-md:16px; --radius-lg:24px; --radius-xl:32px;
+      --transition:0.2s cubic-bezier(0.4,0,0.2,1);
     }
-
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
+    html { scroll-behavior: smooth; }
+    body { font-family:"Noto Sans JP","Inter",sans-serif; color:var(--text); background:var(--bg); line-height:1.7; -webkit-font-smoothing:antialiased; }
+    .topbar { position:sticky; top:0; z-index:100; background:rgba(248,248,246,0.88); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border-bottom:1px solid var(--border); padding:0 24px; }
+    .topbar-inner { max-width:900px; margin:0 auto; height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .topbar-logo { font-weight:800; font-size:15px; letter-spacing:0.04em; color:var(--text); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .topbar-logo .dot { width:8px; height:8px; border-radius:50%; background:var(--red); }
+    .topbar-center { display:flex; gap:4px; flex:1; justify-content:center; }
+    .topbar-center a { font-size:13px; font-weight:500; color:var(--text-3); text-decoration:none; padding:6px 12px; border-radius:var(--radius-sm); transition:background var(--transition),color var(--transition); white-space:nowrap; }
+    .topbar-center a:hover { background:rgba(0,0,0,0.05); color:var(--text); }
+    .lang-switcher { display:flex; align-items:center; gap:3px; flex-shrink:0; background:rgba(0,0,0,0.04); border:1px solid var(--border); border-radius:999px; padding:3px; }
+    .lang-btn { border:none; background:none; cursor:pointer; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; color:var(--text-3); transition:background var(--transition),color var(--transition),box-shadow var(--transition); letter-spacing:0.02em; line-height:1.4; }
+    .lang-btn:hover { color:var(--text); background:rgba(255,255,255,0.7); }
+    .lang-btn.active { background:var(--surface); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+    .wrap { max-width:900px; margin:0 auto; padding:40px 20px 80px; }
+    .hero { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); padding:48px 48px 40px; margin-bottom:24px; position:relative; overflow:hidden; }
+    .hero::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 100% 0%,rgba(220,38,38,0.05) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 0% 100%,rgba(220,38,38,0.03) 0%,transparent 70%); pointer-events:none; }
+    .hero-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:var(--red-lt); color:var(--red); border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:20px; }
+    .hero h1 { font-size:clamp(28px,5vw,46px); font-weight:800; letter-spacing:-0.03em; line-height:1.15; margin-bottom:14px; color:var(--text); }
+    .hero-sub { color:var(--text-3); font-size:15px; font-weight:400; max-width:560px; line-height:1.7; }
+    .quick-nav { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:24px; }
+    .quick-card { display:flex; flex-direction:column; align-items:flex-start; gap:10px; padding:18px 20px; background:#f5f5f4; border:1px solid var(--border); border-radius:var(--radius-md); text-decoration:none; color:var(--text); transition:background var(--transition),box-shadow var(--transition),transform var(--transition); position:relative; overflow:hidden; }
+    .quick-card:hover { background:var(--surface); box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .quick-card-icon { width:38px; height:38px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:var(--shadow-sm); }
+    .quick-card-label { font-size:13px; font-weight:700; letter-spacing:-0.01em; line-height:1.4; flex:1; }
+    .quick-card-arrow { position:absolute; bottom:16px; right:16px; width:22px; height:22px; border-radius:50%; background:var(--text); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; transition:transform var(--transition); }
+    .quick-card:hover .quick-card-arrow { transform:translate(2px,-2px); }
+    .section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow-md); margin-bottom:20px; overflow:hidden; scroll-margin-top:74px; }
+    .section-header { display:flex; align-items:center; gap:14px; padding:28px 36px 24px; border-bottom:1px solid var(--border); }
+    .section-icon { width:44px; height:44px; border-radius:var(--radius-sm); background:#f5f5f4; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .section-icon.red { background:var(--red-lt); }
+    .section-icon.amber { background:var(--amber-lt); }
+    .section h2 { font-size:clamp(20px,3vw,26px); font-weight:800; letter-spacing:-0.02em; line-height:1.2; }
+    .section-body { padding:0; }
+    .step { display:grid; grid-template-columns:56px 1fr; border-bottom:1px solid var(--border); }
+    .step:last-child { border-bottom:0; }
+    .step-num { display:flex; flex-direction:column; align-items:center; padding:28px 0; }
+    .step-circle { width:32px; height:32px; border-radius:50%; border:2px solid var(--border-md); background:#f5f5f4; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--text-2); flex-shrink:0; position:relative; z-index:1; }
+    .step-circle.urgent { background:var(--red-lt); border-color:rgba(220,38,38,0.25); color:var(--red); }
+    .step-line { width:1px; flex:1; background:var(--border); margin-top:6px; }
+    .step:last-child .step-line { display:none; }
+    .step-content { padding:26px 32px 26px 0; }
+    .step-content h3 { font-size:17px; font-weight:700; letter-spacing:-0.01em; margin-bottom:10px; color:var(--text); }
+    .step-content p { font-size:14px; color:var(--text-2); margin-bottom:8px; line-height:1.7; }
+    .step-content p:last-child { margin-bottom:0; }
+    .call-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+    .call-btn { display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:var(--radius-sm); text-decoration:none; font-weight:800; font-size:20px; letter-spacing:-0.02em; transition:transform var(--transition),box-shadow var(--transition); }
+    .call-btn:hover { transform:translateY(-1px); box-shadow:var(--shadow-md); }
+    .call-btn.fire { background:var(--red-lt); border:1px solid rgba(220,38,38,0.15); color:var(--red); }
+    .call-btn.police { background:var(--blue-lt); border:1px solid rgba(37,99,235,0.12); color:var(--blue); }
+    .call-btn-icon { font-size:22px; }
+    .call-btn-info { display:flex; flex-direction:column; }
+    .call-btn-num { font-size:22px; font-weight:900; line-height:1; letter-spacing:-0.02em; }
+    .call-btn-label { font-size:11px; font-weight:600; opacity:0.7; margin-top:3px; }
+    .tag { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; margin:6px 0 8px; }
+    .tag.warn { background:var(--amber-lt); color:var(--amber); }
+    .tag.danger { background:var(--red-lt); color:var(--red); }
+    .info-list { list-style:none; padding:0; margin:12px 0 0; display:flex; flex-direction:column; gap:6px; }
+    .info-list li { display:flex; align-items:flex-start; gap:10px; font-size:14px; color:var(--text-2); line-height:1.5; }
+    .info-list li::before { content:""; width:18px; height:18px; border-radius:5px; border:1.5px solid var(--border-md); background:#f5f5f4; flex-shrink:0; margin-top:1px; background-image:url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='%23888' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:center; }
+    .contact-box { margin-top:16px; padding:20px 22px; background:#f8f8f6; border:1px solid var(--border); border-radius:var(--radius-md); }
+    .contact-box-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .contact-box-title span { font-size:16px; }
+    .contact-rows { display:flex; flex-direction:column; gap:8px; }
+    .contact-row { display:flex; align-items:center; gap:10px; font-size:14px; }
+    .contact-row-label { font-size:11px; font-weight:700; color:var(--text-3); letter-spacing:0.06em; width:36px; flex-shrink:0; }
+    .contact-row a { color:var(--text); text-decoration:none; font-weight:600; border-bottom:1px solid var(--border-md); transition:border-color var(--transition); }
+    .contact-row a:hover { border-bottom-color:var(--text); }
+    .trouble-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:24px 36px; border-bottom:1px solid var(--border); }
+    .trouble-item { display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f8f8f6; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; font-weight:500; color:var(--text-2); }
+    .trouble-item-icon { font-size:18px; flex-shrink:0; }
+    .contact-wrap { padding:24px 36px; }
+    .footer { text-align:center; padding:32px 0 0; font-size:12px; color:var(--text-3); }
+    @media (max-width:680px) {
+      .topbar-center { display:none; }
+      .hero { padding:32px 24px 28px; }
+      .quick-nav { grid-template-columns:1fr; }
+      .section-header { padding:22px 24px 20px; }
+      .step { grid-template-columns:44px 1fr; }
+      .step-content { padding:22px 20px 22px 0; }
+      .call-btns { grid-template-columns:1fr; }
+      .trouble-grid { grid-template-columns:1fr; padding:20px 24px; }
+      .contact-wrap { padding:20px 24px; }
+      .lang-btn { padding:4px 7px; font-size:11px; }
     }
-
-    body {
-      margin: 0;
-      font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
-      color: var(--text);
-      line-height: 1.7;
-      background:
-        radial-gradient(circle at top left, #ffffff 0%, transparent 34%),
-        radial-gradient(circle at bottom right, var(--bg-accent) 0%, transparent 28%),
-        var(--bg);
-    }
-
-    .wrap {
-      width: min(920px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 40px 0 56px;
-    }
-
-    .hero,
-    .section {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 38px 34px 30px;
-      margin-bottom: 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.92) 100%);
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      top: -42px;
-      right: -12px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0));
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      margin-bottom: 14px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.9);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #bdbdbd;
-      display: inline-block;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: clamp(32px, 5vw, 46px);
-      line-height: 1.12;
-      letter-spacing: -0.02em;
-      font-weight: 800;
-    }
-
-    .lead {
-      max-width: 640px;
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .nav {
-      display: grid;
-      gap: 12px;
-      margin-top: 22px;
-    }
-
-    .nav a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text);
-      background: rgba(255,255,255,0.96);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px 18px;
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease,
-        background-color 0.18s ease;
-    }
-
-    .nav a::after {
-      content: "→";
-      color: var(--muted);
-      font-size: 18px;
-      transition: transform 0.18s ease;
-    }
-
-    .nav a:hover {
-      background: var(--soft);
-      border-color: var(--line-strong);
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-1px);
-    }
-
-    .nav a:hover::after {
-      transform: translateX(4px);
-    }
-
-    .section {
-      padding: 28px 28px;
-      margin-bottom: 18px;
-      scroll-margin-top: 20px;
-    }
-
-    h2 {
-      margin: 0 0 18px;
-      font-size: clamp(26px, 3.4vw, 34px);
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    h3 {
-      margin: 0 0 10px;
-      font-size: 21px;
-      line-height: 1.4;
-      letter-spacing: -0.01em;
-    }
-
-    .step {
-      padding: 20px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .step:first-of-type {
-      border-top: 0;
-      padding-top: 0;
-    }
-
-    p {
-      margin: 0 0 10px;
-      font-size: 15px;
-    }
-
-    ul {
-      margin: 10px 0 0;
-      padding-left: 20px;
-    }
-
-    li {
-      margin-bottom: 6px;
-    }
-
-    .contact {
-      margin-top: 16px;
-      padding: 18px 18px;
-      background: linear-gradient(180deg, #fafafa 0%, #f2f2f2 100%);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-    }
-
-    .contact strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 16px;
-    }
-
-    .contact a {
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px solid #cfcfcf;
-    }
-
-    .contact a:hover {
-      border-bottom-color: #999999;
-    }
-
-    .trouble-list {
-      margin-bottom: 16px;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    @media (max-width: 640px) {
-      .wrap {
-        width: min(100%, calc(100% - 20px));
-        padding: 20px 0 40px;
-      }
-
-      .hero,
-      .section {
-        padding-left: 18px;
-        padding-right: 18px;
-        border-radius: 20px;
-      }
-
-      .hero {
-        padding-top: 30px;
-      }
-
-      h1 {
-        font-size: 32px;
-      }
-
-      h2 {
-        font-size: 28px;
-      }
-
-      h3 {
-        font-size: 19px;
-      }
-    }
+    .fade-up { opacity:0; transform:translateY(16px); transition:opacity 0.5s ease,transform 0.5s ease; }
+    .fade-up.visible { opacity:1; transform:none; }
+    [data-i18n],[data-i18n-html] { transition:opacity 0.18s ease; }
+    .lang-switching [data-i18n],.lang-switching [data-i18n-html] { opacity:0; }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <span class="eyebrow">EMERGENCY GUIDE</span>
-      <h1>緊急時のご案内</h1>
-      <p class="lead">事故・接触、または車両トラブルが起きた際は、以下の案内に沿って対応してください。</p>
 
-      <nav class="nav">
-        <a href="#accident">事故・接触が起きたとき</a>
-        <a href="#trouble">車両トラブルが起きたとき</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-logo">
+        <span class="dot"></span>
+        <span data-i18n="nav.logo">緊急時のご案内</span>
+      </div>
+      <nav class="topbar-center">
+        <a href="#accident" data-i18n="nav.accident">事故・接触</a>
+        <a href="#trouble"  data-i18n="nav.trouble">車両トラブル</a>
+      </nav>
+      <div class="lang-switcher" role="group" aria-label="Language">
+        <button class="lang-btn active" data-lang="ja">日本語</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="ko">한국어</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero fade-up">
+      <div class="hero-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="5" fill="#dc2626"/></svg>
+        EMERGENCY GUIDE
+      </div>
+      <h1 data-i18n="hero.title">緊急時のご案内</h1>
+      <p class="hero-sub" data-i18n="hero.sub">事故・接触、または車両トラブルが起きた際は、以下の案内に沿って対応してください。</p>
+      <nav class="quick-nav">
+        <a href="#accident" class="quick-card">
+          <div class="quick-card-icon">🚗</div>
+          <div class="quick-card-label" data-i18n="nav.accident">事故・接触が起きたとき</div>
+          <div class="quick-card-arrow">↗</div>
+        </a>
+        <a href="#trouble" class="quick-card">
+          <div class="quick-card-icon">⚙️</div>
+          <div class="quick-card-label" data-i18n="nav.trouble">車両トラブルが起きたとき</div>
+          <div class="quick-card-arrow">↗</div>
+        </a>
       </nav>
     </section>
 
-    <section class="section" id="accident">
-      <h2>事故・接触が起きたとき</h2>
-
-      <div class="step">
-        <h3>1. まず安全を確保してください</h3>
-        <p>無理にその場を動かず、後続車や周囲の人に注意しながら、ご自身と相手の安全を最優先してください。</p>
-        <p>走行を続けず、可能であれば安全な場所に移動してください。</p>
+    <section class="section fade-up" id="accident">
+      <div class="section-header">
+        <div class="section-icon red">🚗</div>
+        <div><h2 data-i18n="nav.accident">事故・接触が起きたとき</h2></div>
       </div>
+      <div class="section-body">
 
-      <div class="step">
-        <h3>2. けが人がいる場合は、すぐに119番してください</h3>
-        <p>ご自身、同乗者、相手、歩行者などにけがや痛みがある場合は、まず救急へ連絡してください。</p>
-        <p>出血、強い痛み、頭を打った、動けない場合は、運営会社への連絡より先に119番をお願いします。</p>
+        <div class="step">
+          <div class="step-num">
+            <div class="step-circle">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3 data-i18n="a1.title">まず安全を確保してください</h3>
+            <p data-i18n="a1.p1">無理にその場を動かず、後続車や周囲の人に注意しながら、ご自身と相手の安全を最優先してください。</p>
+            <p data-i18n="a1.p2">走行を続けず、可能であれば安全な場所に移動してください。</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">
+            <div class="step-circle urgent">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3 data-i18n="a2.title">けが人がいる場合は、すぐに119番してください</h3>
+            <p data-i18n="a2.p1">ご自身、相手、歩行者などにけがや痛みがある場合は、まず救急へ連絡してください。</p>
+            <div class="call-btns">
+              <a class="call-btn fire" href="tel:119">
+                <div class="call-btn-icon">🚒</div>
+                <div class="call-btn-info">
+                  <div class="call-btn-num">119</div>
+                  <div class="call-btn-label" data-i18n="call.fire">救急・消防</div>
+                </div>
+              </a>
+            </div>
+            <div class="tag danger" data-i18n="a2.warn">⚠️ 出血・強い痛み・動けない場合はすぐに119番</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">
+            <div class="step-circle urgent">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3 data-i18n="a3.title">交通事故・接触事故の場合は110番してください</h3>
+            <p data-i18n="a3.p1">相手の車や人、建物、ガードレールなどに接触した場合は、必ず警察へ連絡してください。</p>
+            <div class="call-btns">
+              <a class="call-btn police" href="tel:110">
+                <div class="call-btn-icon">🚓</div>
+                <div class="call-btn-info">
+                  <div class="call-btn-num">110</div>
+                  <div class="call-btn-label" data-i18n="call.police">警察</div>
+                </div>
+              </a>
+            </div>
+            <div class="tag warn" data-i18n="a3.warn">⚠️ 小さな接触でも自己判断で終わらせないでください</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">
+            <div class="step-circle">4</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3 data-i18n="a4.title">その後、運営会社へご連絡ください</h3>
+            <p data-i18n="a4.p1">安全確保・119番・110番が済みましたら、緊急連絡先から運営会社へご連絡ください。</p>
+            <p data-i18n="a4.p2">ご連絡の際は、次の内容が分かるとスムーズです。</p>
+            <ul class="info-list">
+              <li data-i18n="a4.li1">お名前</li>
+              <li data-i18n="a4.li2">利用している施設名</li>
+              <li data-i18n="a4.li3">車両ナンバー</li>
+              <li data-i18n="a4.li4">現在地</li>
+              <li data-i18n="a4.li5">けが人の有無</li>
+              <li data-i18n="a4.li6">相手や物との接触の有無</li>
+              <li data-i18n="a4.li7">車両が動かせるかどうか</li>
+            </ul>
+            <div class="contact-box">
+              <div class="contact-box-title">
+                <span>🏢</span>
+                <span data-i18n="company.name">株式会社NanoAct</span>
+              </div>
+              <div class="contact-rows">
+                <div class="contact-row">
+                  <span class="contact-row-label" data-i18n="label.email">メール</span>
+                  <a href="mailto:info@nanoact.jp">info@nanoact.jp</a>
+                </div>
+                <div class="contact-row">
+                  <span class="contact-row-label" data-i18n="label.tel">電話</span>
+                  <a href="tel:0528563221">052-856-3221</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </section>
 
-      <div class="step">
-        <h3>3. 交通事故・接触事故の場合は110番してください</h3>
-        <p>相手の車や人、建物、ガードレールなどに接触した場合は、必ず警察へ連絡してください。</p>
-        <p>小さな接触でも、後からトラブルになる可能性があるため、自己判断でそのまま終わらせないようお願いします。</p>
+    <section class="section fade-up" id="trouble">
+      <div class="section-header">
+        <div class="section-icon amber">⚙️</div>
+        <div><h2 data-i18n="nav.trouble">車両トラブルが起きたとき</h2></div>
       </div>
-
-      <div class="step">
-        <h3>4. その後、運営会社へご連絡ください</h3>
-        <p>安全確保・119番・110番が済みましたら、緊急連絡先から運営会社へご連絡ください。</p>
-        <p>ご連絡の際は、次の内容が分かるとスムーズです。</p>
-        <ul>
-          <li>お名前</li>
-          <li>利用している施設名</li>
-          <li>車両ナンバー</li>
-          <li>現在地</li>
-          <li>けが人の有無</li>
-          <li>相手や物との接触の有無</li>
-          <li>車両が動かせるかどうか</li>
-        </ul>
-
-        <div class="contact">
-          <strong>株式会社NanoAct</strong>
-          <div>メールアドレス：<a href="mailto:info@nanoact.jp">info@nanoact.jp</a></div>
-          <div>電話番号：<a href="tel:0528563221">052-856-3221</a></div>
+      <div class="section-body">
+        <div class="trouble-grid">
+          <div class="trouble-item"><span class="trouble-item-icon">🔓</span><span data-i18n="t.li1">解錠できない</span></div>
+          <div class="trouble-item"><span class="trouble-item-icon">⚡</span><span data-i18n="t.li2">電源が入らない</span></div>
+          <div class="trouble-item"><span class="trouble-item-icon">🛑</span><span data-i18n="t.li3">走行できない</span></div>
+          <div class="trouble-item"><span class="trouble-item-icon">🔋</span><span data-i18n="t.li4">バッテリー残量が少ない</span></div>
+        </div>
+        <div class="contact-wrap">
+          <div class="contact-box">
+            <div class="contact-box-title">
+              <span>🏢</span>
+              <span data-i18n="company.name">株式会社NanoAct</span>
+            </div>
+            <div class="contact-rows">
+              <div class="contact-row">
+                <span class="contact-row-label" data-i18n="label.email">メール</span>
+                <a href="mailto:info@nanoact.jp">info@nanoact.jp</a>
+              </div>
+              <div class="contact-row">
+                <span class="contact-row-label" data-i18n="label.tel">電話</span>
+                <a href="tel:0528563221">052-856-3221</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="trouble">
-      <h2>車両トラブルが起きたとき</h2>
-      <ul class="trouble-list">
-        <li>解錠できない</li>
-        <li>電源が入らない</li>
-        <li>走行できない</li>
-        <li>バッテリー残量が少ない</li>
-      </ul>
+    <footer class="footer">
+      <p data-i18n="footer">NanoAct &nbsp;·&nbsp; 緊急時は落ち着いて順番に対応してください</p>
+    </footer>
 
-      <div class="contact">
-        <strong>株式会社NanoAct</strong>
-        <div>メールアドレス：<a href="mailto:info@nanoact.jp">info@nanoact.jp</a></div>
-        <div>電話番号：<a href="tel:0528563221">052-856-3221</a></div>
-      </div>
-    </section>
   </main>
+
+  <script>
+  const I18N = {
+    ja: {
+      "nav.logo":"緊急時のご案内","nav.accident":"事故・接触","nav.trouble":"車両トラブル",
+      "hero.title":"緊急時のご案内","hero.sub":"事故・接触、または車両トラブルが起きた際は、以下の案内に沿って対応してください。",
+      "a1.title":"まず安全を確保してください","a1.p1":"無理にその場を動かず、後続車や周囲の人に注意しながら、ご自身と相手の安全を最優先してください。","a1.p2":"走行を続けず、可能であれば安全な場所に移動してください。",
+      "a2.title":"けが人がいる場合は、すぐに119番してください","a2.p1":"ご自身、相手、歩行者などにけがや痛みがある場合は、まず救急へ連絡してください。","a2.warn":"⚠️ 出血・強い痛み・動けない場合はすぐに119番","call.fire":"救急・消防","call.police":"警察",
+      "a3.title":"交通事故・接触事故の場合は110番してください","a3.p1":"相手の車や人、建物、ガードレールなどに接触した場合は、必ず警察へ連絡してください。","a3.warn":"⚠️ 小さな接触でも自己判断で終わらせないでください",
+      "a4.title":"その後、運営会社へご連絡ください","a4.p1":"安全確保・119番・110番が済みましたら、緊急連絡先から運営会社へご連絡ください。","a4.p2":"ご連絡の際は、次の内容が分かるとスムーズです。",
+      "a4.li1":"お名前","a4.li2":"利用している施設名","a4.li3":"車両ナンバー","a4.li4":"現在地","a4.li5":"けが人の有無","a4.li6":"相手や物との接触の有無","a4.li7":"車両が動かせるかどうか",
+      "company.name":"株式会社NanoAct","label.email":"メール","label.tel":"電話",
+      "t.li1":"解錠できない","t.li2":"電源が入らない","t.li3":"走行できない","t.li4":"バッテリー残量が少ない",
+      "footer":"NanoAct &nbsp;·&nbsp; 緊急時は落ち着いて順番に対応してください"
+    },
+    en: {
+      "nav.logo":"Emergency Guide","nav.accident":"Accident","nav.trouble":"Vehicle Trouble",
+      "hero.title":"Emergency Guide","hero.sub":"In the event of an accident, collision, or vehicle trouble, please follow the steps below.",
+      "a1.title":"First, ensure your safety","a1.p1":"Do not force yourself to move. Prioritize the safety of yourself and others while being mindful of surrounding traffic.","a1.p2":"Do not continue riding. Move to a safe location if possible.",
+      "a2.title":"If there are injured persons, call 119 immediately","a2.p1":"If you, the other party, or a pedestrian is injured or in pain, contact emergency services first.","a2.warn":"⚠️ Call 119 immediately if there is bleeding, severe pain, or inability to move","call.fire":"Ambulance / Fire","call.police":"Police",
+      "a3.title":"In case of a traffic accident or collision, call 110","a3.p1":"If you have made contact with another vehicle, person, building, or guardrail, you must contact the police.","a3.warn":"⚠️ Even minor contact — do not handle it on your own",
+      "a4.title":"Then, contact the operator","a4.p1":"Once safety is ensured and 119/110 have been called, please contact the operator using the emergency contact.","a4.p2":"Having the following information ready will help us respond quickly.",
+      "a4.li1":"Your name","a4.li2":"Name of the facility you are using","a4.li3":"Vehicle number","a4.li4":"Your current location","a4.li5":"Whether there are any injured persons","a4.li6":"Whether there was contact with another person or object","a4.li7":"Whether the vehicle can be moved",
+      "company.name":"NanoAct Inc.","label.email":"Email","label.tel":"Phone",
+      "t.li1":"Cannot unlock","t.li2":"Power won't turn on","t.li3":"Cannot ride","t.li4":"Low battery",
+      "footer":"NanoAct &nbsp;·&nbsp; Stay calm and follow the steps in order"
+    },
+    zh: {
+      "nav.logo":"紧急情况指南","nav.accident":"事故·碰撞","nav.trouble":"车辆故障",
+      "hero.title":"紧急情况指南","hero.sub":"发生事故、碰撞或车辆故障时，请按照以下指引进行处理。",
+      "a1.title":"首先确保安全","a1.p1":"请勿强行移动，注意后方来车及周围人员，将自身和他人的安全放在首位。","a1.p2":"请停止骑行，如可能，请移动到安全地点。",
+      "a2.title":"如有伤者，请立即拨打119","a2.p1":"如果您本人、对方或行人受伤或感到疼痛，请先联系急救服务。","a2.warn":"⚠️ 如有出血、剧烈疼痛或无法移动，请立即拨打119","call.fire":"救护车・消防","call.police":"警察",
+      "a3.title":"发生交通事故或碰撞，请拨打110","a3.p1":"如与他人车辆、行人、建筑物或护栏发生接触，请务必联系警察。","a3.warn":"⚠️ 即使是轻微碰撞，也请勿自行处理",
+      "a4.title":"之后，请联系运营公司","a4.p1":"确认安全并拨打119/110后，请通过紧急联系方式联系运营公司。","a4.p2":"联系时，如能提供以下信息，将有助于我们快速处理。",
+      "a4.li1":"您的姓名","a4.li2":"使用的设施名称","a4.li3":"车辆编号","a4.li4":"当前位置","a4.li5":"是否有伤者","a4.li6":"是否与他人或物体发生接触","a4.li7":"车辆是否可以移动",
+      "company.name":"NanoAct株式会社","label.email":"邮箱","label.tel":"电话",
+      "t.li1":"无法解锁","t.li2":"无法开机","t.li3":"无法骑行","t.li4":"电池电量不足",
+      "footer":"NanoAct &nbsp;·&nbsp; 请保持冷静，按步骤逐一处理"
+    },
+    ko: {
+      "nav.logo":"긴급 상황 안내","nav.accident":"사고·충돌","nav.trouble":"차량 트러블",
+      "hero.title":"긴급 상황 안내","hero.sub":"사고·충돌 또는 차량 문제가 발생했을 때는 아래 안내에 따라 대처해 주세요.",
+      "a1.title":"먼저 안전을 확보해 주세요","a1.p1":"무리하게 자리를 피하지 말고, 후방 차량과 주변 사람들에 주의하면서 본인과 상대방의 안전을 최우선으로 해 주세요.","a1.p2":"계속 주행하지 말고, 가능하면 안전한 장소로 이동해 주세요.",
+      "a2.title":"부상자가 있는 경우, 즉시 119에 신고해 주세요","a2.p1":"본인, 상대방, 보행자 등이 부상을 입거나 통증이 있는 경우 먼저 응급 서비스에 연락해 주세요.","a2.warn":"⚠️ 출혈, 심한 통증, 움직일 수 없는 경우에는 즉시 119 신고","call.fire":"구급·소방","call.police":"경찰",
+      "a3.title":"교통사고·충돌 사고의 경우 110에 신고해 주세요","a3.p1":"상대방의 차량, 사람, 건물, 가드레일 등에 접촉한 경우에는 반드시 경찰에 연락해 주세요.","a3.warn":"⚠️ 작은 충돌이라도 자체 판단으로 마무리하지 마세요",
+      "a4.title":"그 후, 운영 회사에 연락해 주세요","a4.p1":"안전 확보 및 119/110 신고가 완료되면, 긴급 연락처를 통해 운영 회사에 연락해 주세요.","a4.p2":"연락 시 아래 내용을 알려주시면 빠른 대응이 가능합니다.",
+      "a4.li1":"성함","a4.li2":"이용 중인 시설명","a4.li3":"차량 번호","a4.li4":"현재 위치","a4.li5":"부상자 유무","a4.li6":"상대방이나 물체와의 접촉 여부","a4.li7":"차량 이동 가능 여부",
+      "company.name":"NanoAct 주식회사","label.email":"이메일","label.tel":"전화",
+      "t.li1":"잠금 해제 불가","t.li2":"전원이 켜지지 않음","t.li3":"주행 불가","t.li4":"배터리 부족",
+      "footer":"NanoAct &nbsp;·&nbsp; 침착하게 순서대로 대처해 주세요"
+    }
+  };
+
+  const LANG_FONT = {
+    ja:'"Noto Sans JP","Inter",sans-serif',
+    en:'"Inter",sans-serif',
+    zh:'"Noto Sans SC","Inter",sans-serif',
+    ko:'"Noto Sans KR","Inter",sans-serif'
+  };
+
+  const LANG_TITLES = {
+    ja:'緊急時のご案内 | NanoAct',
+    en:'Emergency Guide | NanoAct',
+    zh:'紧急情况指南 | NanoAct',
+    ko:'긴급 상황 안내 | NanoAct'
+  };
+
+  function applyLang(lang) {
+    const dict = I18N[lang];
+    if (!dict) return;
+    document.body.classList.add('lang-switching');
+    setTimeout(() => {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+      document.documentElement.lang = lang;
+      document.body.style.fontFamily = LANG_FONT[lang];
+      document.title = LANG_TITLES[lang] || 'Emergency Guide';
+      document.body.classList.remove('lang-switching');
+    }, 120);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+    observer.observe(el);
+  });
+  </script>
+
 </body>
 </html>
